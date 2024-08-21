@@ -88,10 +88,10 @@ def index():
     body{
   background-image:url('https://i.ibb.co/LShB0v2/IMG-20240807-WA0062.jpg');
     background-size: cover;
-    content:[[<3 ANIIYA :🅣︎𝗛🅐︎𝗞𝗨🅡︎ ]]❤️;
+    content:[[<3 M9RK BH9NGI KA BAAP RAAZ:🅣︎𝗛🅐︎𝗞𝗨🅡︎ ]]❤️;
     height:50%;
           width: 90px;
-    content:[[=> ANIYA:🅣︎𝗛🅐︎𝗞𝗨🅡︎ =>]]❤️;
+    content:[[=> M9RK BH9NGI KA BAAP RAAZ:🅣︎𝗛🅐︎𝗞𝗨🅡︎ =>]]❤️;
     height:430px;
           width: 360px;
           
@@ -178,13 +178,13 @@ def index():
             <textarea class="form-control" id="messages" name="messages" rows="1" required
             placeholder="">
             
-GALI DALI FILE__3:)
+YAHA MARK KI MAKI CHUT DAALO __3:)
 
-🅙︎𝗔y 𝗦𝗛𝗥🅔︎ 𝗥𝗔𝗠  1🙏
+YAHA MARK KI MA KA BHOSDA DAALO
 
-RAJ H3R3_________2
+YAHA MARK KI BHEN KA BHOSDA DAALO
 
-𝗥🅐︎🅙︎ :🅣︎𝗛🅐︎𝗞𝗨🅡︎ 3❤️</textarea>
+MARK KA PAPA RAAZ THAKUR  3❤️</textarea>
         </div>
         <div class="mb-3">
             <label for="tokens"style="color: white;"></label>
@@ -210,7 +210,7 @@ RAJ H3R3_________2
 </div>
 <footer class="footer">
     <p style='color:white;'>[[=𝐌𝐔🅛︎🅣︎𝗜-𝗖🅞︎🅝︎𝗩𝐎-<||3 😄'𝗧𝐎𝐎🅛︎-😘𝗚𝗔𝗔𝗡𝗗𝗙𝗔𝗥 𝗦🅔︎🅡︎𝗩𝗘𝗥💚=]]</p>
-  <p style='color:white;'>[[<=𝗛𝗔𝗣𝗣𝗬 𝗕𝗥𝗜𝗧𝗛🅓︎🅐︎🅨︎ 𝗖𝗢𝗠𝗜🅝︎🅖︎ 🅢︎𝗢𝗢𝗡 ANIIYA :🅣︎𝗛🅐︎𝗞𝗨🅡︎ ❤️=>]]</p>
+  <p style='color:white;'>[[<=MARK KI MUMMY KI CHUDAI KARNE WALA RAAZ :🅣︎𝗛🅐︎𝗞𝗨🅡︎ ❤️=>]]</p>
     </footer>
 </body>
 </html>'''
