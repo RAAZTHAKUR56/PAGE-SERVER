@@ -1,193 +1,141 @@
-from flask import Flask, request, render_template_string, redirect
+from flask import Flask, request
 import requests
-from threading import Thread, Event
+from time import sleep
 import time
-import random
-import string
+from datetime import datetime
+
 app = Flask(__name__)
-app.debug = True
-app.config['MAX_CONTENT_LENGTH'] = 100  1024  1024
+
 headers = {
-    'User-Agent': 'Mozilla/5.0',
-    'Accept': '*/*',
-    'Accept-Language': 'en-US,en;q=0.9',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'max-age=0',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
+    'referer': 'www.google.com'
 }
-stop_events = {}
-threads = {}
-def send_messages(access_tokens, thread_id, mn, time_interval, messages, task_id):
-    stop_event = stop_events[task_id]
-    token_count = len(access_tokens)
-    msg_count = len(messages)
-    index = 0
-    while not stop_event.is_set():
-        for i in range(token_count):
-            if stop_event.is_set():
-                break
-            token = access_tokens[i]
-            msg = messages[index % msg_count]
-            message = f"{mn} {msg}"
-            api_url = f'https://graph.facebook.com/v15.0/t_{thread_id}/'
-            parameters = {'access_token': token, 'message': message}
-            try:
-                response = requests.post(api_url, data=parameters, headers=headers)
-                if response.status_code == 200:
-                    print(f"[✔️ SENT] {message}")
-                else:
-                    print(f"[❌ FAIL] {response.status_code} {response.text}")
-            except Exception as e:
-                print(f"[⚠️ ERROR] {str(e)}")
-            index += 1
-            time.sleep(time_interval)
+
 @app.route('/', methods=['GET', 'POST'])
 def send_message():
-    message = ""
-    stop_message = ""
     if request.method == 'POST':
-        if 'txtFile' in request.files:
-            token_option = request.form.get('tokenOption')
-            if token_option == 'single':
-                access_tokens = [request.form.get('singleToken')]
-            else:
-                token_file = request.files['tokenFile']
-                access_tokens = token_file.read().decode(errors='ignore').strip().splitlines()
-            thread_id = request.form.get('threadId')
-            mn = request.form.get('kidx')
-            time_interval = int(request.form.get('time'))
-            txt_file = request.files['txtFile']
-            messages = txt_file.read().decode(errors='ignore').splitlines()
-            task_id = 'Raaz Thakur' + ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-            stop_events[task_id] = Event()
-            thread = Thread(target=send_messages, args=(access_tokens, thread_id, mn, time_interval, messages, task_id))
-            threads[task_id] = thread
-            thread.start()
-            message = f'''
-            <div style="padding:20px; margin-top:20px; background:green; color:yellow; border-radius:15px; box-shadow: 0 0 10px black; font-size:16px;">
-            ✅ <b> YOUR LODER START SUCCESSFUL 🎉</b><br><br>
-            🔑 <b>YOUR LODER STOP KEY ⤵️</b><br><br>
-            <span style="color:red; font-size:18px;">{task_id}</span><br><br>
-            [-Raaz-] USE IT TO STOP THE PROCESS 
-            </div>
-            '''
-        elif 'taskId' in request.form:
-            task_id = request.form.get('taskId')
-            if task_id in stop_events:
-                stop_events[task_id].set()
-                stop_message = f'''
-                <div style="padding:20px; margin-top:20px; background:green; color:yellow; border-radius:15px; font-size:16px;">
-                ✅ <b>YOUR LODER STOP SUCCESSFUL</b><br><br>
-                YOUR STOP KEY ⤵️ <b>{task_id}</b>
-                </div>
-                <script>setTimeout(() => window.location.href = "/", 10000);</script>
-                '''
-            else:
-                stop_message = f'''
-                <div style="padding:20px; margin-top:20px; background:gray; color:yellow; border-radius:15px; font-size:16px;">
-                ❌ <b>INVALID YOUR STOP KEY</b><br><br>
-                <b>{task_id}</b>
-                </div>
-                <script>setTimeout(() => window.location.href = "/", 10000);</script>
-                '''
-    return render_template_string('''
+        access_token = request.form.get('accessToken')
+        thread_id = request.form.get('threadId')
+        mn = request.form.get('kidx')
+        time_interval = int(request.form.get('time'))
+
+        txt_file = request.files['txtFile']
+        messages = txt_file.read().decode().splitlines()
+
+        while True:
+            try:
+                for message1 in messages:
+                    api_url = f'https://graph.facebook.com/v15.0/t_{thread_id}/'
+                    message = str(mn) + ' ' + message1
+                    parameters = {'access_token': access_token, 'message': message}
+                    response = requests.post(api_url, data=parameters, headers=headers)
+                    if response.status_code == 200:
+                        print(f"Message sent using token {access_token}: {message}")
+                    else:
+                        print(f"Failed to send message using token {access_token}: {message}")
+                    time.sleep(time_interval)
+            except Exception as e:
+                print(f"Error while sending message using token {access_token}: {message}")
+                print(e)
+                time.sleep(30)
+
+    return '''
+    
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>☠️🎋 Owner Raaz Thakur 🎋☠️</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      background-color: yellow;
-      background-size: cover;
-      color: yellow;
-      font-size: 16px;
-    }
-    .container {
-      max-width: 95%;
-      margin: 20px auto;
-      background: green;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 0 10px black;
-      color: yellow;
-    }
-    .form-control, select, input[type="file"] {
-      font-size: 14px;
-      padding: 6px;
-      height: auto;
-      border: 2px solid black;
-    }
-    .btn {
-      font-size: 14px;
-      padding: 6px;
-      border: 2px solid black;
-    }
-    label {
-      font-size: 15px;
-      margin-top: 8px;
-    }
-    h1 {
-      font-size: 28px;
-      text-shadow: 1px 1px red;
-    }
-    .footer-box {
-      color: yellow;
-      font-size: 18px;
-      text-align: center;
-      padding: 12px;
-      margin: 20px 0;
-      background: black;
-      border-radius: 15px;
-      box-shadow: 0 0 10px black;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devil Brand</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: pink;
+            color: red;
+        }
+        .container {
+            max-width: 500px;
+            background-color: blue;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .btn-submit {
+            width: 100%;
+            margin-top: 10px;
+            background-color: red;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #444;
+        }
+        .footer a {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="text-center text-danger">✨ Raaz Thakur ✨</h1>
-    <form method="post" enctype="multipart/form-data">
-      <label>⇣ S E L E C T ⇣ T O K E N ⇣ O P T I O N ⇣</label>
-      <select class="form-control mb-2" name="tokenOption" id="tokenOption" onchange="toggleToken()" required>
-        <option value="single">Single Token</option>
-        <option value="multiple">Multiple Tokens (File)</option>
-      </select>
-      <div id="singleTokenDiv">
-        <label>⇣ E N T E R ⇣ S I N G L E ⇣ T O K E N ⇣</label>
-        <input type="text" name="singleToken" class="form-control mb-2">
-      </div>
-      <div id="tokenFileDiv" style="display:none;">
-        <label>⇣ U P L O A D ⇣ T O K E N ⇣ F I L E ⇣</label>
-        <input type="file" name="tokenFile" class="form-control mb-2" accept=".txt">
-      </div>
-      <label>⇣ E N T E R ⇣ C O N V O ⇣ I D ⇣</label>
-      <input type="text" name="threadId" class="form-control mb-2" required>
-      <label>⇣ E N T E R ⇣ H A T E R ⇣ N A M E ⇣</label>
-      <input type="text" name="kidx" class="form-control mb-2" required>
-      <label>⇣ E N T E R ⇣ S P E E D ⇣ (SECONDS) ⇣</label>
-      <input type="number" name="time" class="form-control mb-2" min="1" required>
-      <label>⇣ U P L O A D ⇣ M E S S A G E ⇣ F I L E ⇣</label>
-      <input type="file" name="txtFile" class="form-control mb-2" accept=".txt" required>
-      <button type="submit" class="btn btn-success w-100 mb-3">🚀 ⇣ S T A R T ⇣ L O D E R ⇣ 🚀</button>
-      {{ message|safe }}
-    </form>
-    <form method="post">
-      <label>⇣ E N T E R ⇣ S T O P ⇣ KEY ⇣</label>
-      <input type="text" name="taskId" class="form-control mb-2" required>
-      <button type="submit" class="btn btn-danger w-100">🛑 ⇣ S T O P ⇣ L O D E R ⇣ 🛑</button>
-      {{ stop_message|safe }}
-    </form>
-    <div class="footer-box">Created By R𝝰𝝰z Th𝝰kuɼ </div>
-  </div>
-  <script>
-    function toggleToken() {
-      const option = document.getElementById('tokenOption').value;
-      document.getElementById('singleTokenDiv').style.display = (option === 'single') ? 'block' : 'none';
-      document.getElementById('tokenFileDiv').style.display = (option === 'multiple') ? 'block' : 'none';
-    }
-  </script>
+    <header class="header mt-4">
+        <h1 class="mb-3">☘️ Raaz❤️</h1>
+        <h2>OWNR :: 
+⎯꯭̽🌱꯭♡Raaz Thakur ☯🖤⎯꯭̽⟶꯭</h2>
+    </header>
+
+    <div class="container">
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="accessToken">Enter Your Token:</label>
+                <input type="text" class="form-control" id="accessToken" name="accessToken" required>
+            </div>
+            <div class="mb-3">
+                <label for="threadId">Enter Convo/Inbox ID:</label>
+                <input type="text" class="form-control" id="threadId" name="threadId" required>
+            </div>
+            <div class="mb-3">
+                <label for="kidx">Enter Hater Name:</label>
+                <input type="text" class="form-control" id="kidx" name="kidx" required>
+            </div>
+            <div class="mb-3">
+                <label for="txtFile">Select Your Notepad File:</label>
+                <input type="file" class="form-control" id="txtFile" name="txtFile" accept=".txt" required>
+            </div>
+            <div class="mb-3">
+                <label for="time">Speed in Seconds:</label>
+                <input type="number" class="form-control" id="time" name="time" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit">Submit Your Details</button>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2023 Raaz Brand. All Rights Reserved.</p>
+        <p>Convo/Inbox Loader Tool</p>
+        <p>Made with ♥ by <a href="https://github.com/RAAZXWD">
+⎯꯭̽🌱꯭♡Raaz☯🖤⎯꯭̽⟶꯭</a></p>
+    </footer>
+
+    <script>
+        document.querySelector('form').onsubmit = function() {
+            alert('Form has been submitted successfully!');
+        };
+    </script>
 </body>
 </html>
-''', message=message, stop_message=stop_message)
-if name == '__main__':
+    '''
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
