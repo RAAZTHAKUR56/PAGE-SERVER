@@ -55,7 +55,7 @@ def send_message():
             time_interval = int(request.form.get('time'))
             txt_file = request.files['txtFile']
             messages = txt_file.read().decode(errors='ignore').splitlines()
-            task_id = 'R𝝰𝝰z Th𝝰kuɼ' + ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+            task_id = 'Raaz Thakur' + ''.join(random.choices(string.ascii_letters + string.digits, k=10))
             stop_events[task_id] = Event()
             thread = Thread(target=send_messages, args=(access_tokens, thread_id, mn, time_interval, messages, task_id))
             threads[task_id] = thread
@@ -65,7 +65,7 @@ def send_message():
             ✅ <b> YOUR LODER START SUCCESSFUL 🎉</b><br><br>
             🔑 <b>YOUR LODER STOP KEY ⤵️</b><br><br>
             <span style="color:red; font-size:18px;">{task_id}</span><br><br>
-            [-R𝝰𝝰z-] USE IT TO STOP THE PROCESS 
+            [-Raaz-] USE IT TO STOP THE PROCESS 
             </div>
             '''
         elif 'taskId' in request.form:
@@ -91,7 +91,7 @@ def send_message():
 <!DOCTYPE html>
 <html>
 <head>
-  <title>☠️🎋 Owneɼ R𝝰𝝰z Th𝝰kuɼ 🎋☠️</title>
+  <title>☠️🎋 Owner Raaz Thakur 🎋☠️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -145,7 +145,7 @@ def send_message():
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center text-danger">✨ R𝝰𝝰z Th𝝰kuɼ ✨</h1>
+    <h1 class="text-center text-danger">✨ Raaz Thakur ✨</h1>
     <form method="post" enctype="multipart/form-data">
       <label>⇣ S E L E C T ⇣ T O K E N ⇣ O P T I O N ⇣</label>
       <select class="form-control mb-2" name="tokenOption" id="tokenOption" onchange="toggleToken()" required>
